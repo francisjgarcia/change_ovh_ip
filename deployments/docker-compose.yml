@@ -1,0 +1,14 @@
+version: "3.6"
+services:
+  api_ddd:
+    container_name: ${CONTAINER_NAME}
+    build:
+      context: ../
+      dockerfile: deployments/Dockerfile
+    image: ${IMAGE_NAME_API}
+    volumes:
+      - ../app:/usr/src/app:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: python app.py
+    restart: always
