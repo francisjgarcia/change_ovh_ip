@@ -2,11 +2,6 @@
 # -*- coding: 850 -*-
 # -*- coding: utf-8 -*-
 
-# Requirements
-# pip install python-dotenv
-# pip install requests
-# pip install ovh
-
 from dotenv import load_dotenv
 import requests
 import ovh
