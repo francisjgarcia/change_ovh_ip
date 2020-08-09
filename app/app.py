@@ -56,10 +56,15 @@ while 1:
     if DomainIP != PublicIP:
         try:
             ovh_change_ip()
-            dynu_ip()
             print('La IP publica en OVH ha sido modificada de ' + DomainIP + ' a ' + PublicIP)
-            telegram_alert("🌐 <b>Cambio de IP (OVH)</b> %0A La nueva IP es " + PublicIP, TelegramToken, TelegramID)
+            telegram_alert("🌐 <b>Cambio de IP</b> %0A La nueva IP es " + PublicIP, TelegramToken, TelegramID)
         except:
             print('Ha habido un fallo al modificar el registro DNS en OVH.')
-            telegram_alert("🔥 <b>ERROR (OVH)</b> %0A Ha sucedido un error al modificar un registro de la zona DNS " + OVHDomain + ".", TelegramToken, TelegramID)
+            telegram_alert("🔥 <b>ERROR (OVH)</b> %0A Ha sucedido un error al modificar un registro de la zona DNS " + OVHDomain, TelegramToken, TelegramID)
+        try:
+            dynu_ip()
+            print('La IP publica en DYNU ha sido modificada de ' + DomainIP + ' a ' + PublicIP)
+        except:
+            print('Ha habido un fallo al modificar el registro DNS en OVH.')
+            telegram_alert("🔥 <b>ERROR (DYNU)</b> %0A Ha sucedido un error al modificar la IP Pública del dominio serverfjg.dynu.net", TelegramToken, TelegramID)
     time.sleep(60)
