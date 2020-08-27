@@ -32,7 +32,7 @@ def check_ovh_ip():
 
 def check_public_ip():
     global PublicIP
-    PublicIP = requests.get('https://api.ipify.org').text
+    PublicIP = requests.get('ifconfig.co').text
 
 def telegram_alert(bot_message, bot_token, bot_chatID):
     send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?parse_mode=html&disable_web_page_preview=True&chat_id=' + bot_chatID + '&text=' + bot_message
