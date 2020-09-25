@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: 850 -*-
-# -*- coding: utf-8 -*-
 
 import telepot
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
