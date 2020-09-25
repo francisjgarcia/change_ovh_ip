@@ -37,7 +37,7 @@ def check_ovh_ip():
 def check_public_ip():
     global PublicIP
     web_status_code = requests.get(ifconfig_web).status_code
-    if web_status_code == 201:
+    if web_status_code == 200:
         PublicIP = requests.get(ifconfig_web).text
     else:
         print("No se ha podido obtener la IP pública, ya que ha sucedido un error al intentar acceder a la página " + ifconfig_web)
