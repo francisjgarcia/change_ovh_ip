@@ -1,4 +1,4 @@
-FROM python:3.8.5-alpine
+FROM python:3.8.5-slim-buster
 
 LABEL maintainer Francis J. Garcia <francisjgarcia94@gmail.com>
 
