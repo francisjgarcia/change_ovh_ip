@@ -2,6 +2,8 @@
 # -*- coding: 850 -*-
 # -*- coding: utf-8 -*-
 
+import telepot
+from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
 from dotenv import load_dotenv
 import requests
 import ovh
@@ -10,18 +12,18 @@ import os
 import time
 
 load_dotenv()
+
+telegram_alert_bot = telepot.Bot(os.getenv("TELEGRAM_TOKEN"))
+telegram_alert_id = os.getenv("TELEGRAM_ID")
 OVHDomain = os.getenv("OVH_DOMAIN")
 OVHEndPoint = os.getenv("OVH_ENDPOINT")
 OVHApplicationKey = os.getenv("OVH_APPLICATION_KEY")
 OVHApplicationSecret = os.getenv("OVH_APPLICATION_SECRET")
 OVHConsumerKey = os.getenv("OVH_CONSUMER_KEY")
-TelegramToken = os.getenv("TELEGRAM_TOKEN")
-TelegramID = os.getenv("TELEGRAM_ID")
 DynuUsername = os.getenv("DYNU_USERNAME")
 DynuPassword = os.getenv("DYNU_PASSWORD")
 ifconfig_web = os.getenv("IFCONFIG_WEB")
 client = ovh.Client(endpoint=OVHEndPoint, application_key=OVHApplicationKey, application_secret=OVHApplicationSecret, consumer_key=OVHConsumerKey)
-
 
 def check_ovh_ip():
     result = client.get('/domain/zone/' + OVHDomain + '/record', fieldType='A')
@@ -38,12 +40,8 @@ def check_public_ip():
     if web_status_code == 201:
         PublicIP = requests.get(ifconfig_web).text
     else:
-        print("No se ha podido obtener la IP publica, ya que ha sucedido un error al intentar acceder a la pagina " + ifconfig_web)
+        print("No se ha podido obtener la IP pública, ya que ha sucedido un error al intentar acceder a la página " + ifconfig_web)
         exit(0)
-
-def telegram_alert(bot_message, bot_token, bot_chatID):
-    send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?parse_mode=html&disable_web_page_preview=True&chat_id=' + bot_chatID + '&text=' + bot_message
-    response = requests.get(send_text)
 
 def ovh_change_ip():
     result = client.put('/domain/zone/' + OVHDomain + '/record/' + DomainID, target=PublicIP)
@@ -60,18 +58,18 @@ def dynu_ip():
 while 1:
     check_ovh_ip()
     check_public_ip()
-    if DomainIP != PublicIP:
+    if DomainIP == PublicIP:
         try:
             ovh_change_ip()
-            print('La IP publica en OVH ha sido modificada de ' + DomainIP + ' a ' + PublicIP)
-            telegram_alert("🌐 <b>Cambio de IP</b> %0A La nueva IP es " + PublicIP, TelegramToken, TelegramID)
+            print('La IP pública en OVH ha sido modificada de ' + DomainIP + ' a ' + PublicIP)
+            telegram_alert_bot.sendMessage(telegram_alert_id, "🌐 <b>Cambio de IP</b> \n La nueva IP es " + PublicIP, parse_mode='HTML')
         except:
             print('Ha habido un fallo al modificar el registro DNS en OVH.')
-            telegram_alert("🔥 <b>ERROR (OVH)</b> %0A Ha sucedido un error al modificar un registro de la zona DNS " + OVHDomain, TelegramToken, TelegramID)
+            telegram_alert_bot.sendMessage(telegram_alert_id, "🔥 <b>ERROR (OVH)</b> \n Ha sucedido un error al modificar un registro de la zona DNS ", parse_mode='HTML')
         try:
             dynu_ip()
-            print('La IP publica en DYNU ha sido modificada de ' + DomainIP + ' a ' + PublicIP)
+            print('La IP pública en DYNU ha sido modificada de ' + DomainIP + ' a ' + PublicIP)
         except:
             print('Ha habido un fallo al modificar el registro DNS en OVH.')
-            telegram_alert("🔥 <b>ERROR (DYNU)</b> %0A Ha sucedido un error al modificar la IP Pública del dominio serverfjg.dynu.net", TelegramToken, TelegramID)
+            telegram_alert_bot.sendMessage(telegram_alert_id, "🔥 <b>ERROR (DYNU)</b> \n Ha sucedido un error al modificar la IP pública del dominio serverfjg.dynu.net", parse_mode='HTML')
     time.sleep(60)
