@@ -56,7 +56,7 @@ def dynu_ip():
 while 1:
     check_ovh_ip()
     check_public_ip()
-    if DomainIP == PublicIP:
+    if DomainIP != PublicIP:
         try:
             ovh_change_ip()
             print('La IP pública en OVH ha sido modificada de ' + DomainIP + ' a ' + PublicIP)
