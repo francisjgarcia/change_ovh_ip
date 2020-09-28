@@ -8,6 +8,7 @@ import ovh
 import json
 import os
 import time
+import ipaddress
 
 load_dotenv()
 
@@ -31,12 +32,14 @@ def check_ovh_ip():
     OVHIP = json.dumps(result['target'], indent=4)
     global DomainIP
     DomainIP = OVHIP.replace('"', '')
+    ipaddress.ip_address(DomainIP)
 
 def check_public_ip():
     global PublicIP
     web_status_code = requests.get(ifconfig_web).status_code
     if web_status_code == 200:
         PublicIP = requests.get(ifconfig_web).text
+        ipaddress.ip_address(PublicIP)
     else:
         print("No se ha podido obtener la IP pública, ya que ha sucedido un error al intentar acceder a la página: " + ifconfig_web)
         exit(1)
@@ -76,7 +79,7 @@ while 1:
         if 'count' in locals():
             if count >= 3:
                 print("Ha habido un error obteniendo la IP pública.")
-                telegram_alert_bot.sendMessage(telegram_alert_id, "🔥 <b>ERROR (OVH)</b> \n Ha habido un error obteniendo la IP pública..", parse_mode='HTML')
+                telegram_alert_bot.sendMessage(telegram_alert_id, "🔥 <b>ERROR (OVH)</b> \n Ha habido un error obteniendo la IP pública.", parse_mode='HTML')
             count = count+1
         else:
             count = 1
