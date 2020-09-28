@@ -38,8 +38,8 @@ def check_public_ip():
     if web_status_code == 200:
         PublicIP = requests.get(ifconfig_web).text
     else:
-        print("No se ha podido obtener la IP pública, ya que ha sucedido un error al intentar acceder a la página " + ifconfig_web)
-        exit(0)
+        print("No se ha podido obtener la IP pública, ya que ha sucedido un error al intentar acceder a la página: " + ifconfig_web)
+        exit(1)
 
 def ovh_change_ip():
     result = client.put('/domain/zone/' + OVHDomain + '/record/' + DomainID, target=PublicIP)
@@ -54,20 +54,30 @@ def dynu_ip():
     response = requests.get('http://api.dynu.com/nic/update', params=params)
 
 while 1:
-    check_ovh_ip()
-    check_public_ip()
-    if DomainIP != PublicIP:
-        try:
-            ovh_change_ip()
-            print('La IP pública en OVH ha sido modificada de ' + DomainIP + ' a ' + PublicIP)
-            telegram_alert_bot.sendMessage(telegram_alert_id, "🌐 <b>Cambio de IP</b> \n La nueva IP es " + PublicIP, parse_mode='HTML')
-        except:
-            print('Ha habido un fallo al modificar el registro DNS en OVH.')
-            telegram_alert_bot.sendMessage(telegram_alert_id, "🔥 <b>ERROR (OVH)</b> \n Ha sucedido un error al modificar un registro de la zona DNS ", parse_mode='HTML')
-        try:
-            dynu_ip()
-            print('La IP pública en DYNU ha sido modificada de ' + DomainIP + ' a ' + PublicIP)
-        except:
-            print('Ha habido un fallo al modificar el registro DNS en OVH.')
-            telegram_alert_bot.sendMessage(telegram_alert_id, "🔥 <b>ERROR (DYNU)</b> \n Ha sucedido un error al modificar la IP pública del dominio serverfjg.dynu.net", parse_mode='HTML')
+    try:
+        check_ovh_ip()
+        check_public_ip()
+        if DomainIP != PublicIP:
+            try:
+                ovh_change_ip()
+                print('La IP pública en OVH ha sido modificada de ' + DomainIP + ' a ' + PublicIP)
+                telegram_alert_bot.sendMessage(telegram_alert_id, "🌐 <b>Cambio de IP</b> \n La nueva IP es " + PublicIP, parse_mode='HTML')
+            except:
+                print('Ha habido un fallo al modificar el registro DNS en OVH.')
+                telegram_alert_bot.sendMessage(telegram_alert_id, "🔥 <b>ERROR (OVH)</b> \n Ha sucedido un error al modificar un registro de la zona DNS ", parse_mode='HTML')
+            try:
+                dynu_ip()
+                print('La IP pública en DYNU ha sido modificada de ' + DomainIP + ' a ' + PublicIP)
+            except:
+                print('Ha habido un fallo al modificar el registro DNS en OVH.')
+                telegram_alert_bot.sendMessage(telegram_alert_id, "🔥 <b>ERROR (DYNU)</b> \n Ha sucedido un error al modificar la IP pública del dominio serverfjg.dynu.net", parse_mode='HTML')
+        count = 0
+    except:
+        if 'count' in locals():
+            if count >= 3:
+                print("Ha habido un error obteniendo la IP pública.")
+                telegram_alert_bot.sendMessage(telegram_alert_id, "🔥 <b>ERROR (OVH)</b> \n Ha habido un error obteniendo la IP pública..", parse_mode='HTML')
+            count = count+1
+        else:
+            count = 1
     time.sleep(60)
