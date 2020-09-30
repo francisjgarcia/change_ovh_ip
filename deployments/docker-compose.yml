@@ -1,6 +1,6 @@
 version: "3.6"
 services:
-  api_ddd:
+  api_ovh_ip:
     container_name: ${CONTAINER_NAME}
     build:
       context: ../
