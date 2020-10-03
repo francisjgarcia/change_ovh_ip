@@ -72,7 +72,7 @@ while 1:
                 dynu_ip()
                 print('La IP pública en DYNU ha sido modificada de ' + DomainIP + ' a ' + PublicIP)
             except:
-                print('Ha habido un fallo al modificar el registro DNS en OVH.')
+                print('Ha habido un fallo al modificar el registro DNS en DYNU.')
                 telegram_alert_bot.sendMessage(telegram_alert_id, "🔥 <b>ERROR (DYNU)</b> \n Ha sucedido un error al modificar la IP pública del dominio serverfjg.dynu.net", parse_mode='HTML')
         count = 0
     except:
