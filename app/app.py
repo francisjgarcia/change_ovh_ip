@@ -25,21 +25,27 @@ ifconfig_web = os.getenv("IFCONFIG_WEB")
 client = ovh.Client(endpoint=OVHEndPoint, application_key=OVHApplicationKey, application_secret=OVHApplicationSecret, consumer_key=OVHConsumerKey)
 
 def check_ovh_ip():
-    result = client.get('/domain/zone/' + OVHDomain + '/record', fieldType='A')
-    global DomainID
-    DomainID = json.dumps(result[0], indent=4)
-    result = client.get('/domain/zone/' + OVHDomain + '/record/' + DomainID)
-    OVHIP = json.dumps(result['target'], indent=4)
-    global DomainIP
-    DomainIP = OVHIP.replace('"', '')
-    ipaddress.ip_address(DomainIP)
+    try:
+        result = client.get('/domain/zone/' + OVHDomain + '/record', fieldType='A')
+        global DomainID
+        DomainID = json.dumps(result[0], indent=4)
+        result = client.get('/domain/zone/' + OVHDomain + '/record/' + DomainID)
+        OVHIP = json.dumps(result['target'], indent=4)
+        global DomainIP
+        DomainIP = OVHIP.replace('"', '')
+        ipaddress.ip_address(DomainIP)
+    except:
+        print("No se ha podido obtener la IP pública del registro de OVH.")
 
 def check_public_ip():
     global PublicIP
     web_status_code = requests.get(ifconfig_web).status_code
     if web_status_code == 200:
-        PublicIP = requests.get(ifconfig_web).text
-        ipaddress.ip_address(PublicIP)
+        try:
+            PublicIP = requests.get(ifconfig_web).text
+            ipaddress.ip_address(PublicIP)
+        except:
+            print("Ha sucedido un error al obtener la IP pública actual.")
     else:
         print("No se ha podido obtener la IP pública, ya que ha sucedido un error al intentar acceder a la página: " + ifconfig_web)
         exit(1)
