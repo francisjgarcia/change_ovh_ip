@@ -46,6 +46,7 @@ def check_public_ip():
             ipaddress.ip_address(PublicIP)
         except:
             print("Ha sucedido un error al obtener la IP pública actual.")
+            exit(1)
     else:
         print("No se ha podido obtener la IP pública, ya que ha sucedido un error al intentar acceder a la página: " + ifconfig_web)
         exit(1)
