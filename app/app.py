@@ -37,7 +37,7 @@ def check_ovh_ip():
         print("No se ha podido obtener la IP pública del registro de OVH.")
 
 def check_public_ip():
-    global PublicIP
+    global public_ip
     try:
         ifconfig_web = "https://ipinfo.io/json"
         response = requests.get(ifconfig_web, verify = True)
@@ -67,17 +67,17 @@ while 1:
     try:
         check_ovh_ip()
         check_public_ip()
-        if DomainIP != PublicIP:
+        if DomainIP != public_ip:
             try:
                 ovh_change_ip()
-                print('La IP pública en OVH ha sido modificada de ' + DomainIP + ' a ' + PublicIP)
-                telegram_alert_bot.sendMessage(telegram_alert_id, "🌐 <b>Cambio de IP</b> \n La nueva IP es " + PublicIP, parse_mode='HTML')
+                print('La IP pública en OVH ha sido modificada de ' + DomainIP + ' a ' + public_ip)
+                telegram_alert_bot.sendMessage(telegram_alert_id, "🌐 <b>Cambio de IP</b> \n La nueva IP es " + public_ip, parse_mode='HTML')
             except:
                 print('Ha habido un fallo al modificar el registro DNS en OVH.')
                 telegram_alert_bot.sendMessage(telegram_alert_id, "🔥 <b>ERROR (OVH)</b> \n Ha sucedido un error al modificar un registro de la zona DNS ", parse_mode='HTML')
             try:
                 dynu_ip()
-                print('La IP pública en DYNU ha sido modificada de ' + DomainIP + ' a ' + PublicIP)
+                print('La IP pública en DYNU ha sido modificada de ' + DomainIP + ' a ' + public_ip)
             except:
                 print('Ha habido un fallo al modificar el registro DNS en DYNU.')
                 telegram_alert_bot.sendMessage(telegram_alert_id, "🔥 <b>ERROR (DYNU)</b> \n Ha sucedido un error al modificar la IP pública del dominio serverfjg.dynu.net", parse_mode='HTML')
