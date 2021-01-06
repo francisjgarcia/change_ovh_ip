@@ -11,7 +11,6 @@ import time
 import ipaddress
 
 load_dotenv()
-
 telegram_alert_bot = telepot.Bot(os.getenv("TELEGRAM_TOKEN"))
 telegram_alert_id = os.getenv("TELEGRAM_ID")
 OVHDomain = os.getenv("OVH_DOMAIN")
@@ -39,16 +38,17 @@ def check_ovh_ip():
 
 def check_public_ip():
     global PublicIP
-    web_status_code = requests.get(ifconfig_web).status_code
-    if web_status_code == 200:
-        try:
-            PublicIP = requests.get(ifconfig_web).text
-            ipaddress.ip_address(PublicIP)
-        except:
-            print("Ha sucedido un error al obtener la IP pública actual.")
-            exit(1)
-    else:
-        print("No se ha podido obtener la IP pública, ya que ha sucedido un error al intentar acceder a la página: " + ifconfig_web)
+    try:
+        ifconfig_web = "https://ipinfo.io/json"
+        response = requests.get(ifconfig_web, verify = True)
+        if response.status_code != 200:
+            print('Status:', response.status_code, 'Ha habido un problema con la solicitud de la IP Pública.')
+            exit()
+        data = response.json()
+        public_ip = data['ip']
+        ipaddress.ip_address(public_ip)
+    except:
+        print("Ha sucedido un error al obtener la IP pública actual.")
         exit(1)
 
 def ovh_change_ip():
