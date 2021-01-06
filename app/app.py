@@ -39,7 +39,6 @@ def check_ovh_ip():
 def check_public_ip():
     global public_ip
     try:
-        ifconfig_web = "https://ipinfo.io/json"
         response = requests.get(ifconfig_web, verify = True)
         if response.status_code != 200:
             print('Status:', response.status_code, 'Ha habido un problema con la solicitud de la IP Pública.')
@@ -52,12 +51,12 @@ def check_public_ip():
         exit(1)
 
 def ovh_change_ip():
-    result = client.put('/domain/zone/' + OVHDomain + '/record/' + DomainID, target=PublicIP)
+    result = client.put('/domain/zone/' + OVHDomain + '/record/' + DomainID, target=public_ip)
     result = client.post('/domain/zone/' + OVHDomain + '/refresh')
 
 def dynu_ip():
     params = (
-        ('myip', 'PublicIP'),
+        ('myip', 'public_ip'),
         ('username', DynuUsername),
         ('password', DynuPassword),
     )
