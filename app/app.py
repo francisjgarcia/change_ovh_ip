@@ -89,4 +89,4 @@ while 1:
             count = count+1
         else:
             count = 1
-    time.sleep(60)
+    time.sleep(1800)
