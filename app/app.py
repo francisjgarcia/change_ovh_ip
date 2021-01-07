@@ -38,17 +38,14 @@ def check_ovh_ip():
 
 def check_public_ip():
     global public_ip
-    try:
-        response = requests.get(ifconfig_web, verify = True)
-        if response.status_code != 200:
-            print('Status:', response.status_code, 'Ha habido un problema con la solicitud de la IP Pública.')
-            exit()
+    response = requests.get(ifconfig_web, verify = True)
+    if response.status_code != 200:
+        print('Status:', response.status_code, 'Ha habido un problema con la solicitud de la IP Pública.')
+        exit()
+    else
         data = response.json()
         public_ip = data['ip']
         ipaddress.ip_address(public_ip)
-    except:
-        print("Ha sucedido un error al obtener la IP pública actual.")
-        exit(1)
 
 def ovh_change_ip():
     result = client.put('/domain/zone/' + OVHDomain + '/record/' + DomainID, target=public_ip)
