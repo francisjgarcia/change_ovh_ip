@@ -42,7 +42,7 @@ def check_public_ip():
     if response.status_code != 200:
         print('Status:', response.status_code, 'Ha habido un problema con la solicitud de la IP Pública.')
         exit()
-    else
+    else:
         data = response.json()
         public_ip = data['ip']
         ipaddress.ip_address(public_ip)
@@ -86,4 +86,4 @@ while 1:
             count = count+1
         else:
             count = 1
-    time.sleep(1800)
+    time.sleep(3600)
